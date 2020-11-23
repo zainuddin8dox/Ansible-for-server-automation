@@ -74,7 +74,3 @@
 - name: Allow 443 through firewall
   ufw: rule=allow direction=in proto=tcp port=443
 
-
-handlers:
-- name: restart nginx
-  service: name=nginx state=restarted
