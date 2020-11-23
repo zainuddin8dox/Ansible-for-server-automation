@@ -1,0 +1,32 @@
+- hosts: jenkins
+  roles: 
+    - Install docker
+    - pull and lunch image docker
+  vars_files:
+    - vars/jenkins.yml
+
+  tasks:
+    - name: Update apt-cache 
+      apt: update_cache=yes 
+      
+- hosts: frontend
+  roles: 
+    - Install docker
+    - pull and lunch image docker
+  vars_files:
+    - vars/frontend.yml
+
+  tasks:
+    - name: Update apt-cache 
+      apt: update_cache=yes       
+ 
+- hosts: backend
+  roles: 
+    - Install docker
+    - pull and lunch image docker
+  vars_files:
+    - vars/backend.yml
+ 
+  tasks:
+    - name: Update apt-cache 
+      apt: update_cache=yes 
