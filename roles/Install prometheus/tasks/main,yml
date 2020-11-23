@@ -1,0 +1,91 @@
+- name: Download Prometheus
+  get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v2.22.1/prometheus-2.22.1.linux-amd64.tar.gz
+    dest: /tmp
+
+- name: Extract Prometheus
+  unarchive:
+    src: /tmp/prometheus-2.22.1.linux-amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Create Prometheus config directories
+  file:
+    path: /etc/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "u=rwx,g=rx,o=rx"
+- name: copy console
+  copy:
+    src: /usr/local/bin/prometheus-2.22.1.linux-amd64/consoles
+    dest: /etc/prometheus
+    remote_src: yes
+- name: copy console_libraries
+  copy:
+    src:  /usr/local/bin/prometheus-2.22.1.linux-amd64/console_libraries
+    dest: /etc/prometheus
+    remote_src: yes
+- name: Create Prometheus directories
+  file:
+    path: /var/lib/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Create Prometheus yamel
+  file:
+      path: /etc/prometheus/prometheus.yml
+      state: touch
+- name: Edit Prometheus Service File
+  blockinfile:
+      path: /etc/prometheus/prometheus.yml
+      marker: ""
+      block: | 
+        global:
+         scrape_interval: 10s
+        scrape_configs:
+         - job_name: 'prometheus_metrics'
+           scrape_interval: 5s
+           static_configs:
+             - targets: ['172.31.20.241:9090']
+         - job_name: 'node_exporter_metrics'
+           scrape_interval: 5s
+           static_configs:
+             - targets: ['172.31.44.4:9100','172.31.41.112:9100','172.31.42.200:9100','172.31.57.107:9100','172.31.37.11:9100']
+
+- name: Create Prometheus Service File
+  file:
+      path: /etc/systemd/system/prometheus.service
+      state: touch
+
+- name: Edit Prometheus Service File
+  blockinfile:
+      path: /etc/systemd/system/prometheus.service
+      marker: ""
+      block: |
+        [Unit]
+        Description=Prometheus
+        After=network.target
+        [Service]
+        User=prometheus
+        Group=prometheus
+        Type=simple
+        ExecStart=/usr/local/bin/prometheus-2.22.1.linux-amd64/prometheus \
+           --config.file /etc/prometheus/prometheus.yml \
+           --storage.tsdb.path /var/lib/prometheus/ \
+           --web.console.templates=/etc/prometheus/consoles \
+           --web.console.libraries=/etc/prometheus/console_libraries
+        [Install]
+        WantedBy=multi-user.target
+
+- name: systemd reload
+  systemd:
+    daemon_reload: yes
+
+- name: Start Prometheus service
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
