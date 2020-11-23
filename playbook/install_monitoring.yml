@@ -1,3 +1,9 @@
 - hosts: frontend,backend,jenkins  
   roles:
     - node_exporter 
+
+- hosts: monitoring
+  roles: 
+    - prometheus
+    - Gravana
+    - node_exporter
