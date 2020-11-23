@@ -1,0 +1,15 @@
+[nginx]
+172.31.57.107 ansible_python_interpreter=/usr/bin/python3
+
+[jenkins]
+172.31.44.4 ansible_python_interpreter=/usr/bin/python3
+[backend]
+172.31.41.112 ansible_python_interpreter=/usr/bin/python3
+[frontend]
+172.31.42.200 ansible_python_interpreter=/usr/bin/python3
+
+[database]
+172.31.37.11 ansible_python_interpreter=/usr/bin/python3
+
+[monitoring]
+172.31.40.24 ansible_python_interpreter=/usr/bin/python3 
