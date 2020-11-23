@@ -1,0 +1,79 @@
+- hosts: nginx
+  tasks:
+
+    - name: ensure NGINX is installed
+      apt: pkg=nginx state=present
+
+    - name: copy NGINX site config
+      copy:
+        src: files/frontend.conf
+        dest: /etc/nginx/sites-available/frontend
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/frontend
+        dest: /etc/nginx/sites-enabled/frontend
+        state: link
+      notify: restart nginx
+
+    - name: copy NGINX site config
+      copy:
+        src: files/backend.conf
+        dest: /etc/nginx/sites-available/backend
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/backend
+        dest: /etc/nginx/sites-enabled/backend
+        state: link
+      notify: restart nginx
+
+    - name: copy NGINX site config
+      copy:
+        src: files/grafana.conf
+        dest: /etc/nginx/sites-available/grafana
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+    - name: Enable  site
+      file:
+        src: /etc/nginx/sites-available/grafana
+        dest: /etc/nginx/sites-enabled/grafana
+        state: link
+      notify: restart nginx
+
+    - name: copy NGINX site config
+      copy:
+        src: files/jenkins.conf
+        dest: /etc/nginx/sites-available/jenkins
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/jenkins
+        dest: /etc/nginx/sites-enabled/jenkins
+        state: link
+      notify: restart nginx
+
+    - name: remove default website from nginx
+      file: path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: Allow 80 through firewall
+      ufw: rule=allow direction=in proto=tcp port=80
+
+    - name: Allow 443 through firewall
+      ufw: rule=allow direction=in proto=tcp port=443
+
+
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
