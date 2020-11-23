@@ -1,0 +1,3 @@
+- hosts: frontend,backend,jenkins  
+  roles:
+    - node_exporter 
