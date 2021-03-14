@@ -3,8 +3,10 @@
 
 [jenkins]
 172.31.44.4 ansible_python_interpreter=/usr/bin/python3
+
 [backend]
 172.31.41.112 ansible_python_interpreter=/usr/bin/python3
+
 [frontend]
 172.31.42.200 ansible_python_interpreter=/usr/bin/python3
 
